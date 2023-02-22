@@ -21,9 +21,9 @@ public partial class GecubdContext : DbContext
 
     public virtual DbSet<EstadoSolicitud> EstadoSolicituds { get; set; }
 
-    public virtual DbSet<PropsServicio> PropsServicios { get; set; }
+    public virtual DbSet<PropsAplicacione> PropsAplicaciones { get; set; }
 
-    public virtual DbSet<PropserviciomMtiposervicio> PropserviciomMtiposervicios { get; set; }
+    public virtual DbSet<PropsServicio> PropsServicios { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
 
@@ -95,6 +95,30 @@ public partial class GecubdContext : DbContext
                 .HasColumnName("descripcion");
         });
 
+        modelBuilder.Entity<PropsAplicacione>(entity =>
+        {
+            entity.HasKey(e => e.IdPropAplicacion).HasName("PRIMARY");
+
+            entity.ToTable("props_aplicaciones");
+
+            entity.HasIndex(e => e.IdTipoAplicacion, "FK_props_aplicaciones_tipo_aplicacion");
+
+            entity.Property(e => e.IdPropAplicacion)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_propAplicacion");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(50)
+                .HasColumnName("descripcion");
+            entity.Property(e => e.IdTipoAplicacion)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_tipoAplicacion");
+
+            entity.HasOne(d => d.IdTipoAplicacionNavigation).WithMany(p => p.PropsAplicaciones)
+                .HasForeignKey(d => d.IdTipoAplicacion)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_props_aplicaciones_tipo_aplicacion");
+        });
+
         modelBuilder.Entity<PropsServicio>(entity =>
         {
             entity.HasKey(e => e.IdPropServicio).HasName("PRIMARY");
@@ -117,35 +141,6 @@ public partial class GecubdContext : DbContext
                 .HasForeignKey(d => d.IdTipoServicio)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_props_servicios_tipo_servicio");
-        });
-
-        modelBuilder.Entity<PropserviciomMtiposervicio>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("propserviciom_mtiposervicio");
-
-            entity.HasIndex(e => e.IdPropServicio, "FK__props_servicios");
-
-            entity.HasIndex(e => e.IdTipoServicio, "FK__tipo_servicio");
-
-            entity.Property(e => e.Id)
-                .HasColumnType("int(11)")
-                .HasColumnName("id");
-            entity.Property(e => e.IdPropServicio)
-                .HasColumnType("int(11)")
-                .HasColumnName("id_propServicio");
-            entity.Property(e => e.IdTipoServicio)
-                .HasColumnType("int(11)")
-                .HasColumnName("id_tipoServicio");
-
-            entity.HasOne(d => d.IdPropServicioNavigation).WithMany(p => p.PropserviciomMtiposervicios)
-                .HasForeignKey(d => d.IdPropServicio)
-                .HasConstraintName("FK__props_servicios");
-
-            entity.HasOne(d => d.IdTipoServicioNavigation).WithMany(p => p.PropserviciomMtiposervicios)
-                .HasForeignKey(d => d.IdTipoServicio)
-                .HasConstraintName("FK__tipo_servicio");
         });
 
         modelBuilder.Entity<Role>(entity =>

@@ -17,6 +17,8 @@ namespace gecu_API.Controllers
             _dbcontext = _context;
         }
 
+
+        //METODO PARA OBTENER TODOS LOS PERMISOS DE LA BASE DE DATOS
         [HttpGet]
         [Route("list")]
         public IActionResult list()
@@ -34,6 +36,8 @@ namespace gecu_API.Controllers
             }
         }
 
+
+        //METODO PARA OBTENER TODOS LOS PERMISOS A PARTIR DEL ID DE UN SERVICIO
         [HttpGet]
         [Route("listByServId/{idservicio:int}")]
         public IActionResult listByServId(int idservicio)
@@ -52,6 +56,31 @@ namespace gecu_API.Controllers
                     }
                 }
                 return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = auxList });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
+        }
+
+        //METODO PARA OBTENER UN PERMISO A PARTIR DE UN ID
+        [HttpGet]
+        [Route("listByPropId/{idpermiso:int}")]
+        public IActionResult listByPropId(int idpermiso)
+        {
+            PropsServicio permiso = new PropsServicio();
+
+            try
+            {
+                permiso = _dbcontext.PropsServicios.Find(idpermiso);
+                if (permiso == null)
+                {
+                    return BadRequest("No existe el permiso seleccionado");
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = permiso });
+                }
             }
             catch (Exception ex)
             {

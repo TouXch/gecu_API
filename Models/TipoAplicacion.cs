@@ -9,5 +9,7 @@ public partial class TipoAplicacion
 
     public string Descripcion { get; set; } = null!;
 
+    public virtual ICollection<PropsAplicacione> PropsAplicaciones { get; } = new List<PropsAplicacione>();
+
     public virtual ICollection<SolicitudmMaplicacion> SolicitudmMaplicacions { get; } = new List<SolicitudmMaplicacion>();
 }

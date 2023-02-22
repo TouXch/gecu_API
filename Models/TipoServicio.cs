@@ -11,7 +11,5 @@ public partial class TipoServicio
 
     public virtual ICollection<PropsServicio> PropsServicios { get; } = new List<PropsServicio>();
 
-    public virtual ICollection<PropserviciomMtiposervicio> PropserviciomMtiposervicios { get; } = new List<PropserviciomMtiposervicio>();
-
     public virtual ICollection<SolicitudmMservicio> SolicitudmMservicios { get; } = new List<SolicitudmMservicio>();
 }

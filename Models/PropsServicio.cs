@@ -12,6 +12,4 @@ public partial class PropsServicio
     public int? IdTipoServicio { get; set; }
 
     public virtual TipoServicio? IdTipoServicioNavigation { get; set; }
-
-    public virtual ICollection<PropserviciomMtiposervicio> PropserviciomMtiposervicios { get; } = new List<PropserviciomMtiposervicio>();
 }
