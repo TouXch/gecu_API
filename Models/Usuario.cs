@@ -7,15 +7,15 @@ public partial class Usuario
 {
     public int IdUsuario { get; set; }
 
-    public string Nombre { get; set; } = null!;
+    public long? CarnetIdentidad { get; set; }
 
-    public int? IdContrato { get; set; }
+    public string Nombre { get; set; } = null!;
 
     public int? IdCargo { get; set; }
 
-    public long? CarnetIdentidad { get; set; }
+    public int? IdContrato { get; set; }
 
-    public int? IdRol { get; set; }
+    public int? IdDireccion { get; set; }
 
     public DateTime FechaContrato { get; set; }
 
@@ -26,6 +26,8 @@ public partial class Usuario
     public DateTime FechaCreacion { get; set; }
 
     public sbyte Estado { get; set; }
+
+    public int? IdRol { get; set; }
 
     public virtual Cargo? IdCargoNavigation { get; set; }
 

@@ -7,13 +7,29 @@ public partial class Solicitud
 {
     public int IdSolicitud { get; set; }
 
+    public int? TipoSolicitud { get; set; }
+
+    public int? UsuarioCreador { get; set; }
+
     public DateTime FechaSolicitud { get; set; }
 
-    public int UsuarioCreador { get; set; }
+    public int? EstadoSolicitud { get; set; }
 
-    public int EstadoSolicitud { get; set; }
+    public string Nombre { get; set; } = null!;
 
-    public virtual EstadoSolicitud EstadoSolicitudNavigation { get; set; } = null!;
+    public int? Direccion { get; set; }
+
+    public int? CarnetIdentidad { get; set; }
+
+    public int? Cargo { get; set; }
+
+    public string Usuario { get; set; } = null!;
+
+    public virtual Cargo? CargoNavigation { get; set; }
+
+    public virtual Direccion? DireccionNavigation { get; set; }
+
+    public virtual EstadoSolicitud? EstadoSolicitudNavigation { get; set; }
 
     public virtual ICollection<SolicitudmMaplicacion> SolicitudmMaplicacions { get; } = new List<SolicitudmMaplicacion>();
 
@@ -21,5 +37,7 @@ public partial class Solicitud
 
     public virtual ICollection<SolicitudmMtipo> SolicitudmMtipos { get; } = new List<SolicitudmMtipo>();
 
-    public virtual Usuario UsuarioCreadorNavigation { get; set; } = null!;
+    public virtual TipoSolicitud? TipoSolicitudNavigation { get; set; }
+
+    public virtual Usuario? UsuarioCreadorNavigation { get; set; }
 }

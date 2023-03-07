@@ -9,5 +9,7 @@ public partial class Cargo
 
     public string Descripcion { get; set; } = null!;
 
+    public virtual ICollection<Solicitud> Solicituds { get; } = new List<Solicitud>();
+
     public virtual ICollection<Usuario> Usuarios { get; } = new List<Usuario>();
 }

@@ -12,4 +12,6 @@ public partial class TipoSolicitud
     public sbyte RequiereConfirmacion { get; set; }
 
     public virtual ICollection<SolicitudmMtipo> SolicitudmMtipos { get; } = new List<SolicitudmMtipo>();
+
+    public virtual ICollection<Solicitud> Solicituds { get; } = new List<Solicitud>();
 }

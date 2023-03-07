@@ -19,7 +19,11 @@ public partial class GecubdContext : DbContext
 
     public virtual DbSet<Contrato> Contratos { get; set; }
 
+    public virtual DbSet<Direccion> Direccions { get; set; }
+
     public virtual DbSet<EstadoSolicitud> EstadoSolicituds { get; set; }
+
+    public virtual DbSet<EstadosDireccione> EstadosDirecciones { get; set; }
 
     public virtual DbSet<PropsAplicacione> PropsAplicaciones { get; set; }
 
@@ -81,6 +85,30 @@ public partial class GecubdContext : DbContext
                 .HasColumnName("descripcion");
         });
 
+        modelBuilder.Entity<Direccion>(entity =>
+        {
+            entity.HasKey(e => e.IdDireccion).HasName("PRIMARY");
+
+            entity.ToTable("direccion");
+
+            entity.HasIndex(e => e.IdEstado, "FK__estados_direcciones");
+
+            entity.Property(e => e.IdDireccion)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_direccion");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(50)
+                .HasColumnName("descripcion");
+            entity.Property(e => e.IdEstado)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_estado");
+
+            entity.HasOne(d => d.IdEstadoNavigation).WithMany(p => p.Direccions)
+                .HasForeignKey(d => d.IdEstado)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__estados_direcciones");
+        });
+
         modelBuilder.Entity<EstadoSolicitud>(entity =>
         {
             entity.HasKey(e => e.IdEstadoSol).HasName("PRIMARY");
@@ -92,6 +120,20 @@ public partial class GecubdContext : DbContext
                 .HasColumnName("id_estadoSol");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(150)
+                .HasColumnName("descripcion");
+        });
+
+        modelBuilder.Entity<EstadosDireccione>(entity =>
+        {
+            entity.HasKey(e => e.IdEstado).HasName("PRIMARY");
+
+            entity.ToTable("estados_direcciones");
+
+            entity.Property(e => e.IdEstado)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_estado");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(50)
                 .HasColumnName("descripcion");
         });
 
@@ -163,13 +205,28 @@ public partial class GecubdContext : DbContext
 
             entity.ToTable("solicitud");
 
+            entity.HasIndex(e => e.Cargo, "FK_solicitud_cargo");
+
+            entity.HasIndex(e => e.Direccion, "FK_solicitud_direccion");
+
             entity.HasIndex(e => e.EstadoSolicitud, "FK_solicitud_estado_solicitud");
+
+            entity.HasIndex(e => e.TipoSolicitud, "FK_solicitud_tipo_solicitud");
 
             entity.HasIndex(e => e.UsuarioCreador, "FK_solicitud_usuario");
 
             entity.Property(e => e.IdSolicitud)
                 .HasColumnType("int(11)")
                 .HasColumnName("id_solicitud");
+            entity.Property(e => e.Cargo)
+                .HasColumnType("int(11)")
+                .HasColumnName("cargo");
+            entity.Property(e => e.CarnetIdentidad)
+                .HasColumnType("int(11)")
+                .HasColumnName("carnet_identidad");
+            entity.Property(e => e.Direccion)
+                .HasColumnType("int(11)")
+                .HasColumnName("direccion");
             entity.Property(e => e.EstadoSolicitud)
                 .HasColumnType("int(11)")
                 .HasColumnName("estado_solicitud");
@@ -177,16 +234,42 @@ public partial class GecubdContext : DbContext
                 .HasDefaultValueSql("curdate()")
                 .HasColumnType("datetime")
                 .HasColumnName("fecha_solicitud");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .HasColumnName("nombre");
+            entity.Property(e => e.TipoSolicitud)
+                .HasColumnType("int(11)")
+                .HasColumnName("tipo_solicitud");
+            entity.Property(e => e.Usuario)
+                .HasMaxLength(50)
+                .HasColumnName("usuario");
             entity.Property(e => e.UsuarioCreador)
                 .HasColumnType("int(11)")
                 .HasColumnName("usuario_creador");
 
+            entity.HasOne(d => d.CargoNavigation).WithMany(p => p.Solicituds)
+                .HasForeignKey(d => d.Cargo)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_solicitud_cargo");
+
+            entity.HasOne(d => d.DireccionNavigation).WithMany(p => p.Solicituds)
+                .HasForeignKey(d => d.Direccion)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_solicitud_direccion");
+
             entity.HasOne(d => d.EstadoSolicitudNavigation).WithMany(p => p.Solicituds)
                 .HasForeignKey(d => d.EstadoSolicitud)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_solicitud_estado_solicitud");
+
+            entity.HasOne(d => d.TipoSolicitudNavigation).WithMany(p => p.Solicituds)
+                .HasForeignKey(d => d.TipoSolicitud)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_solicitud_tipo_solicitud");
 
             entity.HasOne(d => d.UsuarioCreadorNavigation).WithMany(p => p.Solicituds)
                 .HasForeignKey(d => d.UsuarioCreador)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_solicitud_usuario");
         });
 
@@ -384,6 +467,9 @@ public partial class GecubdContext : DbContext
             entity.Property(e => e.IdContrato)
                 .HasColumnType("int(11)")
                 .HasColumnName("id_contrato");
+            entity.Property(e => e.IdDireccion)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_direccion");
             entity.Property(e => e.IdRol)
                 .HasColumnType("int(11)")
                 .HasColumnName("id_rol");

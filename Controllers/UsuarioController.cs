@@ -57,6 +57,135 @@ namespace gecu_API.Controllers
             }
         }
 
+        //METODO PARA OBTENER TODOS LOS USUARIOS A PARTIR DE LA DIRECCION A LA QUE PERTENECEN
+        [HttpGet]
+        [Route("listByDir/{idDir:int}")]
+        public IActionResult listByDir(int idDir)
+        {
+            List<Usuario> usuarios = new List<Usuario>();
+            List<Usuario> usuariosDir = new List<Usuario>();
+
+            try
+            {
+                usuarios = _dbcontext.Usuarios.ToList();
+
+                if (idDir == 0)
+                {
+                    usuariosDir = usuarios;
+                    return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = usuariosDir });
+                }
+                else
+                {
+                    foreach (var usuario in usuarios)
+                    {
+                        if (usuario.IdDireccion == idDir)
+                        {
+                            usuariosDir.Add(usuario);
+                        }
+                    }
+                }
+
+                if (usuariosDir.Count == 0)
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "No hay usuarios en esa dirección", response = usuariosDir });
+                }
+
+                else
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = usuariosDir });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
+        }
+
+        //METODO PARA OBTENER TODOS LOS USUARIOS A PARTIR DEL CARGO QUE OCUPAN
+        [HttpGet]
+        [Route("listByCargo/{idCargo:int}")]
+        public IActionResult listByCargo(int idCargo)
+        {
+            List<Usuario> usuarios = new List<Usuario>();
+            List<Usuario> usuariosCargo = new List<Usuario>();
+
+            try
+            {
+                usuarios = _dbcontext.Usuarios.ToList();
+
+                if (idCargo == 0)
+                {
+                    usuariosCargo = usuarios;
+                    return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = usuarios });
+                }
+                else
+                {
+                    foreach (var usuario in usuarios)
+                    {
+                        if (usuario.IdCargo == idCargo)
+                        {
+                            usuariosCargo.Add(usuario);
+                        }
+                    }
+                }
+
+                if (usuariosCargo.Count == 0)
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "No hay usuarios en el cargo seleccionado", response = usuariosCargo });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = usuariosCargo });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
+        }
+
+        //METODO PARA FILTRAR LOS USUARIOS POR NOMBRE
+        [HttpGet]
+        [Route("listByName/{nombre}")]
+        public IActionResult listByName(String nombre)
+        {
+            List<Usuario> usuaios = new List<Usuario>();
+            List<Usuario> usuariosName = new List<Usuario>();
+
+            try
+            {
+                usuaios = _dbcontext.Usuarios.ToList();
+
+                if (nombre == "")
+                {
+                    usuariosName = usuaios;
+                }
+                else
+                {
+                    foreach (var usuario in usuaios)
+                    {
+                        if (usuario.Nombre.ToLower().Contains(nombre.ToLower()))
+                        {
+                            usuariosName.Add(usuario);
+                        }
+                    }
+                }
+
+                if (usuariosName.Count == 0)
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "No hay usuarios para mostrar", response = usuariosName });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = usuariosName });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
+        }
+
         //METODO PARA OBTENER LOS USUARIOS DE ACUERDO A UN ROL DETERMINADO
         [HttpGet]
         [Route("getByRol/{idrol:int}")]
