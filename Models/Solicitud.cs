@@ -19,7 +19,7 @@ public partial class Solicitud
 
     public int? Direccion { get; set; }
 
-    public int? CarnetIdentidad { get; set; }
+    public long? CarnetIdentidad { get; set; }
 
     public int? Cargo { get; set; }
 

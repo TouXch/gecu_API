@@ -23,7 +23,11 @@ public partial class GecubdContext : DbContext
 
     public virtual DbSet<EstadoSolicitud> EstadoSolicituds { get; set; }
 
+    public virtual DbSet<EstadoUsuario> EstadoUsuarios { get; set; }
+
     public virtual DbSet<EstadosDireccione> EstadosDirecciones { get; set; }
+
+    public virtual DbSet<Permiso> Permisos { get; set; }
 
     public virtual DbSet<PropsAplicacione> PropsAplicaciones { get; set; }
 
@@ -123,6 +127,20 @@ public partial class GecubdContext : DbContext
                 .HasColumnName("descripcion");
         });
 
+        modelBuilder.Entity<EstadoUsuario>(entity =>
+        {
+            entity.HasKey(e => e.IdEstadoU).HasName("PRIMARY");
+
+            entity.ToTable("estado_usuarios");
+
+            entity.Property(e => e.IdEstadoU)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_estadoU");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(50)
+                .HasColumnName("descripcion");
+        });
+
         modelBuilder.Entity<EstadosDireccione>(entity =>
         {
             entity.HasKey(e => e.IdEstado).HasName("PRIMARY");
@@ -132,6 +150,20 @@ public partial class GecubdContext : DbContext
             entity.Property(e => e.IdEstado)
                 .HasColumnType("int(11)")
                 .HasColumnName("id_estado");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(50)
+                .HasColumnName("descripcion");
+        });
+
+        modelBuilder.Entity<Permiso>(entity =>
+        {
+            entity.HasKey(e => e.IdPermiso).HasName("PRIMARY");
+
+            entity.ToTable("permiso");
+
+            entity.Property(e => e.IdPermiso)
+                .HasColumnType("int(11)")
+                .HasColumnName("idPermiso");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(50)
                 .HasColumnName("descripcion");
@@ -222,7 +254,7 @@ public partial class GecubdContext : DbContext
                 .HasColumnType("int(11)")
                 .HasColumnName("cargo");
             entity.Property(e => e.CarnetIdentidad)
-                .HasColumnType("int(11)")
+                .HasColumnType("bigint(11)")
                 .HasColumnName("carnet_identidad");
             entity.Property(e => e.Direccion)
                 .HasColumnType("int(11)")
@@ -442,6 +474,8 @@ public partial class GecubdContext : DbContext
 
             entity.HasIndex(e => e.IdContrato, "FK_usuario_contrato");
 
+            entity.HasIndex(e => e.IdEstadoU, "FK_usuario_estado_usuarios");
+
             entity.HasIndex(e => e.IdRol, "FK_usuario_roles");
 
             entity.Property(e => e.IdUsuario)
@@ -450,10 +484,6 @@ public partial class GecubdContext : DbContext
             entity.Property(e => e.CarnetIdentidad)
                 .HasColumnType("bigint(20)")
                 .HasColumnName("carnet_identidad");
-            entity.Property(e => e.Estado)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)")
-                .HasColumnName("estado");
             entity.Property(e => e.FechaContrato)
                 .HasColumnType("datetime")
                 .HasColumnName("fechaContrato");
@@ -470,6 +500,9 @@ public partial class GecubdContext : DbContext
             entity.Property(e => e.IdDireccion)
                 .HasColumnType("int(11)")
                 .HasColumnName("id_direccion");
+            entity.Property(e => e.IdEstadoU)
+                .HasColumnType("int(11)")
+                .HasColumnName("id_estadoU");
             entity.Property(e => e.IdRol)
                 .HasColumnType("int(11)")
                 .HasColumnName("id_rol");
@@ -492,6 +525,11 @@ public partial class GecubdContext : DbContext
                 .HasForeignKey(d => d.IdContrato)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_usuario_contrato");
+
+            entity.HasOne(d => d.IdEstadoUNavigation).WithMany(p => p.Usuarios)
+                .HasForeignKey(d => d.IdEstadoU)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_usuario_estado_usuarios");
 
             entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdRol)

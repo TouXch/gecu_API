@@ -48,7 +48,7 @@ namespace gecu_API.Controllers
 
                 if (cargo is null)
                 {
-                    return BadRequest("El cargo no existe");
+                    return StatusCode(StatusCodes.Status200OK, new { message = "No existe el cargo especificado" });
                 }
 
                 return StatusCode(StatusCodes.Status200OK, new { message = "ok", response = cargo });

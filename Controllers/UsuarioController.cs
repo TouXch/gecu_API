@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 using gecu_API.Models;
+using System.DirectoryServices.AccountManagement;
 
 namespace gecu_API.Controllers
 {
@@ -10,11 +11,37 @@ namespace gecu_API.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        public readonly GecubdContext _dbcontext;
+        public readonly GecubdContext _dbcontext = new GecubdContext();
 
         public UsuarioController(GecubdContext _context)
         {
             _dbcontext = _context;
+        }
+
+        //METODO PARA AUNTENTICAR USUARIOS USANDO ACTIVE DIRECTORY
+        [HttpGet]
+        [Route("login/{usuario}/{password}")]
+        public IActionResult login(string usuario, string password)
+        {
+            try
+            {
+                using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "movitel.co.cu"))
+                {
+                    bool isValid = pc.ValidateCredentials(usuario, password);
+                    if (isValid)
+                    {
+                        return StatusCode(StatusCodes.Status200OK, new { message = "ok" });
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status200OK, new { message = "Credenciales no validas" });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
         }
 
         //METODO PARA OBTENER TODOS LOS USUARIOS DE LA BD
@@ -44,7 +71,7 @@ namespace gecu_API.Controllers
 
             if (usuario == null)
             {
-                return BadRequest("No existe el usuario");
+                return StatusCode(StatusCodes.Status200OK, new { message = "No existe el usuario" });
             }
 
             try
@@ -291,6 +318,54 @@ namespace gecu_API.Controllers
                 _dbcontext.Update(usuario);
                 _dbcontext.SaveChanges();
                 return StatusCode(StatusCodes.Status200OK, new { message = "El usuario ya no cuenta con ningun rol" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
+        }
+
+        //METODO PARA MODIFICAR UN USUARIO
+        [HttpPut]
+        [Route("edit/{idusuario:int}")]
+        public IActionResult edit(int idusuario, [FromBody] Usuario user)
+        {
+            List<Usuario> users = new List<Usuario>();
+            List<Usuario> usersAux = new List<Usuario>();
+            Usuario usuario = new Usuario();
+            users = _dbcontext.Usuarios.ToList();
+            usuario = _dbcontext.Usuarios.Find(idusuario);
+
+            try
+            {
+                if (usuario == null)
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "No existe ese usuario" });
+                }
+
+                foreach (var item in users)
+                {
+                    if (item.Usuario1 == user.UsuarioCorreo || item.UsuarioCorreo == user.UsuarioCorreo)
+                    {
+                        usersAux.Add(item);
+                    }
+                }
+
+                if (usersAux.Count != 0)
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { message = "El usuario ya existe en el dominio" });
+                }
+
+                usuario.CarnetIdentidad = user.CarnetIdentidad;
+                usuario.Nombre = user.Nombre;
+                usuario.Usuario1 = user.UsuarioCorreo;
+                usuario.UsuarioCorreo = user.UsuarioCorreo;
+                usuario.IdContrato = user.IdContrato;
+                usuario.IdCargo = user.IdCargo;
+                usuario.IdDireccion = user.IdDireccion;
+
+                _dbcontext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK, new { message = "ok" });
             }
             catch (Exception ex)
             {

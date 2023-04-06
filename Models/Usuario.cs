@@ -25,13 +25,15 @@ public partial class Usuario
 
     public DateTime FechaCreacion { get; set; }
 
-    public sbyte Estado { get; set; }
-
     public int? IdRol { get; set; }
+
+    public int? IdEstadoU { get; set; }
 
     public virtual Cargo? IdCargoNavigation { get; set; }
 
     public virtual Contrato? IdContratoNavigation { get; set; }
+
+    public virtual EstadoUsuario? IdEstadoUNavigation { get; set; }
 
     public virtual Role? IdRolNavigation { get; set; }
 

@@ -87,5 +87,85 @@ namespace gecu_API.Controllers
                 return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
             }
         }
+
+        //METODO PARA AGREGAR UN PERMISO A UN SERVICIO
+        [HttpPost]
+        [Route("addpermiso/{idservicio:int}/{permiso}")]
+        public IActionResult addpermiso(int idservicio, string permiso)
+        {
+            PropsServicio propServ = new PropsServicio();
+
+            try
+            {
+                propServ.Descripcion = permiso;
+                propServ.IdTipoServicio = idservicio;
+                _dbcontext.Add(propServ);
+                _dbcontext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK, new { message = "Permiso agregado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
+        }
+
+        //METODO PARA ELIMINAR UNA RELACION ENTRE UN SERVICIO Y UN PERMISO
+        [HttpDelete]
+        [Route("delete/{idservicio:int}/{descripcion}")]
+        public IActionResult delete(int idservicio, string descripcion)
+        {
+            List<PropsServicio> list = new List<PropsServicio>();
+            PropsServicio relacion = new PropsServicio();
+
+            try
+            {
+                list = _dbcontext.PropsServicios.Where(l => l.IdTipoServicio == idservicio).ToList();
+                relacion = list.Find(l => l.Descripcion == descripcion);
+                _dbcontext.Remove(relacion);
+                _dbcontext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK, new { message = "Permiso eliminado" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { message = ex.Message });
+            }
+        }
+
+        //METODO PARA QUITAR TODOS LOS PERMISOS DE UN SERVICIO
+        [HttpDelete]
+        [Route("quitall/{idservicio:int}")]
+        public IActionResult quitall(int idservicio)
+        {
+            List<PropsServicio> list = new List<PropsServicio>();
+            List<PropsServicio> auxList = new List<PropsServicio>();
+
+            try
+            {
+                list = _dbcontext.PropsServicios.ToList();
+                foreach (var item in list)
+                {
+                    if (item.IdTipoServicio == idservicio)
+                    {
+                        auxList.Add(item);
+                    }
+                }
+
+                foreach (var item in auxList)
+                {
+                    if (item.IdTipoServicio == idservicio)
+                    {
+                        _dbcontext.Remove(item);
+                        _dbcontext.SaveChanges();
+                    }
+                }
+
+                return StatusCode(StatusCodes.Status200OK, new { message = "permisos eliminados" });
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
     }
 }
